@@ -36,6 +36,6 @@
 
 @end
 
-@interface UIActionSheet(FeverTabBarActionSheetAdditions)
+@interface UIActionSheet(OBTabBarActionSheetAdditions)
 - (void)showFromFeverTabBar:(OBTabBarController *)tabBarController;
 @end

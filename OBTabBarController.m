@@ -361,7 +361,7 @@
 
 #pragma mark - UIActionSheet Category
 
-@implementation UIActionSheet (FeverTabBarActionSheetAdditions)
+@implementation UIActionSheet (OBTabBarActionSheetAdditions)
 - (void)showFromFeverTabBar:(OBTabBarController *)tabBarController
 {
     [self showFromTabBar:((UITabBar *)tabBarController.tabBar)];
