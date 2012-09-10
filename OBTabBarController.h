@@ -8,12 +8,25 @@
 
 #import <UIKit/UIKit.h>
 
+@class OBTabBarController;
+
+@protocol OBTabBarControllerDelegate <NSObject>
+    - (UIImage *)imageTabAtIndex:(NSUInteger)index;
+    
+    @optional
+    - (UIImage *)tabBarBackground;
+    - (UIImage *)highlightedImageTabAtIndex:(NSUInteger)index;
+    - (BOOL)shouldSelectTabAtIndex:(NSUInteger)index;
+    - (void)didSelectedTabAtIndex:(NSUInteger)index;
+@end
+
 @interface OBTabBarController : UIViewController
 
 @property (nonatomic, retain) NSArray *viewControllers;
+@property (nonatomic, assign) id <OBTabBarControllerDelegate> delegate;
 @property (nonatomic, assign) NSInteger selectedIndex;
 
-- (id)initWithViewControllers:(NSArray *)viewControllers;
+- (id)initWithViewControllers:(NSArray *)viewControllers delegate:(id <OBTabBarControllerDelegate>)delegate;
 
 - (void)presentModalViewController:(UIViewController *)modalViewController animated:(BOOL)animated;
 - (void)dismissModalViewControllerAnimated:(BOOL)animated;
@@ -21,4 +34,8 @@
 
 + (CGFloat)tabBarHeight;
 
+@end
+
+@interface UIActionSheet(FeverTabBarActionSheetAdditions)
+- (void)showFromFeverTabBar:(OBTabBarController *)tabBarController;
 @end
