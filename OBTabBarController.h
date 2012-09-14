@@ -1,6 +1,5 @@
 //
 //  OBTabBarController.m
-//  Fever
 //
 //  Created by Oriol Blanc on 11/22/11.
 //  Copyright (c) 2011 Oriol Blanc. All rights reserved.
@@ -37,5 +36,5 @@
 @end
 
 @interface UIActionSheet(OBTabBarActionSheetAdditions)
-- (void)showFromFeverTabBar:(OBTabBarController *)tabBarController;
+- (void)showFromTabBar:(OBTabBarController *)tabBarController;
 @end
