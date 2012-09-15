@@ -173,8 +173,9 @@
         for (int i = 0; i < self.viewControllers.count; i++)
         {
             CGFloat defaultHeight = 44;
+            CGFloat defaultWidth = buttonWidth;
             UIImage *tabImage = [self.tabBarImages objectAtIndex:i];
-            CGRect buttonFrame = CGRectMake(buttonLeftMargin, defaultHeight - tabImage.size.height, buttonWidth, buttonHeight + (tabImage.size.height - defaultHeight));
+            CGRect buttonFrame = CGRectMake(buttonLeftMargin - (tabImage.size.width - defaultWidth), defaultHeight - tabImage.size.height, buttonWidth + (tabImage.size.width - defaultWidth), buttonHeight + (tabImage.size.height - defaultHeight));
 
             UIButton *tabBarButton = [UIButton buttonWithType:UIButtonTypeCustom tapCallback:^(UIButton *button) {
                 blockSafeSelf.selectedIndex = i;                
@@ -361,6 +362,7 @@
 #pragma mark - UIActionSheet Category
 
 @implementation UIActionSheet (OBTabBarActionSheetAdditions)
+
 - (void)showFromTabBar:(OBTabBarController *)tabBarController
 {
     [self showFromTabBar:((UITabBar *)tabBarController.tabBar)];
