@@ -55,7 +55,7 @@
         _selectedIndex = kNoViewControllerSelected;
         _selectedIndexInternal = kNoViewControllerSelected;
         
-        self.view.frame = CGRectMake(0, 20, 320, 460);
+        self.view.frame = CGRectMake(0, 20, 320, self.view.bounds.size.height - 20);
     }
     
     return self;
