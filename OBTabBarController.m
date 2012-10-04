@@ -13,7 +13,6 @@
 @interface OBTabBarController ()
 {
     NSUInteger _selectedIndexInternal; // To store the previous selected index when the view is unloaded
-
 }
 
 @property (nonatomic, retain) UIView *tabBar;
@@ -177,7 +176,7 @@
             UIImage *tabImage = [self.tabBarImages objectAtIndex:i];
             CGRect buttonFrame = CGRectMake(buttonLeftMargin - (tabImage.size.width - defaultWidth), defaultHeight - tabImage.size.height, buttonWidth + (tabImage.size.width - defaultWidth), buttonHeight + (tabImage.size.height - defaultHeight));
 
-            UIButton *tabBarButton = [UIButton buttonWithType:UIButtonTypeCustom tapCallback:^(UIButton *button) {
+            UIButton *tabBarButton = [UIButton buttonWithType:UIButtonTypeCustom forControlEvents:UIControlEventTouchDown tapCallback:^(UIButton *button) {
                 blockSafeSelf.selectedIndex = i;                
             }];
             
@@ -367,4 +366,5 @@
 {
     [self showFromTabBar:((UITabBar *)tabBarController.tabBar)];
 }
+
 @end
