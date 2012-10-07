@@ -176,7 +176,8 @@
             UIImage *tabImage = [self.tabBarImages objectAtIndex:i];
             CGRect buttonFrame = CGRectMake(buttonLeftMargin - (tabImage.size.width - defaultWidth), defaultHeight - tabImage.size.height, buttonWidth + (tabImage.size.width - defaultWidth), buttonHeight + (tabImage.size.height - defaultHeight));
 
-            UIButton *tabBarButton = [UIButton buttonWithType:UIButtonTypeCustom forControlEvents:UIControlEventTouchDown tapCallback:^(UIButton *button) {
+#warning guarrada de código
+            UIButton *tabBarButton = [UIButton buttonWithType:UIButtonTypeCustom forControlEvents:(i != 2) ? UIControlEventTouchDown : UIControlEventTouchUpInside tapCallback:^(UIButton *button) {
                 blockSafeSelf.selectedIndex = i;                
             }];
             
