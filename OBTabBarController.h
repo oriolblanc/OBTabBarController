@@ -21,9 +21,9 @@
 
 @interface OBTabBarController : UIViewController
 
-@property (nonatomic, retain) NSArray *viewControllers;
-@property (nonatomic, assign) id <OBTabBarControllerDelegate> delegate;
-@property (nonatomic, assign) NSInteger selectedIndex;
+@property (nonatomic, strong) NSArray *viewControllers;
+@property (nonatomic, weak) id <OBTabBarControllerDelegate> delegate;
+@property (nonatomic) NSInteger selectedIndex;
 
 - (id)initWithViewControllers:(NSArray *)viewControllers delegate:(id <OBTabBarControllerDelegate>)delegate;
 

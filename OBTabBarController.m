@@ -99,7 +99,6 @@
     [mainView addSubview:tabBarView];
     
     self.view = mainView;
-    [mainView release];
     
     if (_selectedIndexInternal != kNoViewControllerSelected)
     {
@@ -159,7 +158,6 @@
         UIImageView *tabBarBackground = [[UIImageView alloc] initWithImage:self.backgroundImage];
         tabBarBackground.frame = _tabBar.bounds;
         [_tabBar addSubview:tabBarBackground];
-        [tabBarBackground release];
         
         CGFloat buttonLeftMargin = 0;
         CGFloat buttonWidth = _tabBar.frame.size.width / (float)self.viewControllers.count;
@@ -339,22 +337,6 @@
     [super viewDidUnload];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"UINavigationControllerWillShowViewControllerNotification" object:nil];
-}
-
-- (void)dealloc
-{
-    [_viewControllers release];
-
-    [_tabBar release];
-    [_viewForVisibleViewController release];
-
-    [_tabBarButtons release];
-    [_tabBarImages release];
-    [_selectedTabBarImages release];
-    [_backgroundImage release];
-    
-    
-    [super dealloc];
 }
 
 @end
