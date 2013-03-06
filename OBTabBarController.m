@@ -229,14 +229,18 @@
 
 - (void)presentModalViewController:(UIViewController *)modalViewController animated:(BOOL)animated
 {
-    [super presentModalViewController:modalViewController animated:animated];
-    self.tabBarHiddenBeforePresentingModalViewController = self.tabBarHidden;
+    [super presentViewController:modalViewController animated:animated completion:^{
+        
+        self.tabBarHiddenBeforePresentingModalViewController = self.tabBarHidden;
+    }];
 }
 
 - (void)dismissModalViewControllerAnimated:(BOOL)animated
 {
-    [super dismissModalViewControllerAnimated:animated];
-    [self setTabBarHidden:self.tabBarHiddenBeforePresentingModalViewController animated:NO];
+    [super dismissViewControllerAnimated:animated completion:^{
+
+        [self setTabBarHidden:self.tabBarHiddenBeforePresentingModalViewController animated:NO];
+    }];
 }
 
 #pragma mark - View Controllers Logic
