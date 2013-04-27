@@ -1,6 +1,5 @@
 //
 //  OBTabBarController.m
-//  Fever
 //
 //  Created by Oriol Blanc on 11/22/11.
 //  Copyright (c) 2011 Oriol Blanc. All rights reserved.
@@ -14,7 +13,6 @@
 @interface OBTabBarController ()
 {
     NSUInteger _selectedIndexInternal; // To store the previous selected index when the view is unloaded
-
 }
 
 @property (nonatomic, retain) UIView *tabBar;
@@ -56,7 +54,7 @@
         _selectedIndex = kNoViewControllerSelected;
         _selectedIndexInternal = kNoViewControllerSelected;
         
-        self.view.frame = CGRectMake(0, 20, 320, 460);
+        self.view.frame = CGRectMake(0, 20, 320, self.view.bounds.size.height - 20);
     }
     
     return self;
@@ -101,7 +99,6 @@
     [mainView addSubview:tabBarView];
     
     self.view = mainView;
-    [mainView release];
     
     if (_selectedIndexInternal != kNoViewControllerSelected)
     {
@@ -161,7 +158,6 @@
         UIImageView *tabBarBackground = [[UIImageView alloc] initWithImage:self.backgroundImage];
         tabBarBackground.frame = _tabBar.bounds;
         [_tabBar addSubview:tabBarBackground];
-        [tabBarBackground release];
         
         CGFloat buttonLeftMargin = 0;
         CGFloat buttonWidth = _tabBar.frame.size.width / (float)self.viewControllers.count;
@@ -174,10 +170,12 @@
         for (int i = 0; i < self.viewControllers.count; i++)
         {
             CGFloat defaultHeight = 44;
+            CGFloat defaultWidth = buttonWidth;
             UIImage *tabImage = [self.tabBarImages objectAtIndex:i];
-            CGRect buttonFrame = CGRectMake(buttonLeftMargin, defaultHeight - tabImage.size.height, buttonWidth, buttonHeight + (tabImage.size.height - defaultHeight));
+            CGRect buttonFrame = CGRectMake(buttonLeftMargin - (tabImage.size.width - defaultWidth), defaultHeight - tabImage.size.height, buttonWidth + (tabImage.size.width - defaultWidth), buttonHeight + (tabImage.size.height - defaultHeight));
 
-            UIButton *tabBarButton = [UIButton buttonWithType:UIButtonTypeCustom tapCallback:^(UIButton *button) {
+#warning guarrada de código
+            UIButton *tabBarButton = [UIButton buttonWithType:UIButtonTypeCustom forControlEvents:(i != 2) ? UIControlEventTouchDown : UIControlEventTouchUpInside tapCallback:^(UIButton *button) {
                 blockSafeSelf.selectedIndex = i;                
             }];
             
@@ -231,14 +229,18 @@
 
 - (void)presentModalViewController:(UIViewController *)modalViewController animated:(BOOL)animated
 {
-    [super presentModalViewController:modalViewController animated:animated];
-    self.tabBarHiddenBeforePresentingModalViewController = self.tabBarHidden;
+    [super presentViewController:modalViewController animated:animated completion:^{
+        
+        self.tabBarHiddenBeforePresentingModalViewController = self.tabBarHidden;
+    }];
 }
 
 - (void)dismissModalViewControllerAnimated:(BOOL)animated
 {
-    [super dismissModalViewControllerAnimated:animated];
-    [self setTabBarHidden:self.tabBarHiddenBeforePresentingModalViewController animated:NO];
+    [super dismissViewControllerAnimated:animated completion:^{
+
+        [self setTabBarHidden:self.tabBarHiddenBeforePresentingModalViewController animated:NO];
+    }];
 }
 
 #pragma mark - View Controllers Logic
@@ -341,29 +343,15 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"UINavigationControllerWillShowViewControllerNotification" object:nil];
 }
 
-- (void)dealloc
-{
-    [_viewControllers release];
-
-    [_tabBar release];
-    [_viewForVisibleViewController release];
-
-    [_tabBarButtons release];
-    [_tabBarImages release];
-    [_selectedTabBarImages release];
-    [_backgroundImage release];
-    
-    
-    [super dealloc];
-}
-
 @end
 
 #pragma mark - UIActionSheet Category
 
 @implementation UIActionSheet (OBTabBarActionSheetAdditions)
-- (void)showFromFeverTabBar:(OBTabBarController *)tabBarController
+
+- (void)showFromTabBar:(OBTabBarController *)tabBarController
 {
     [self showFromTabBar:((UITabBar *)tabBarController.tabBar)];
 }
+
 @end

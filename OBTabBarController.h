@@ -1,6 +1,5 @@
 //
 //  OBTabBarController.m
-//  Fever
 //
 //  Created by Oriol Blanc on 11/22/11.
 //  Copyright (c) 2011 Oriol Blanc. All rights reserved.
@@ -22,9 +21,9 @@
 
 @interface OBTabBarController : UIViewController
 
-@property (nonatomic, retain) NSArray *viewControllers;
-@property (nonatomic, assign) id <OBTabBarControllerDelegate> delegate;
-@property (nonatomic, assign) NSInteger selectedIndex;
+@property (nonatomic, strong) NSArray *viewControllers;
+@property (nonatomic, weak) id <OBTabBarControllerDelegate> delegate;
+@property (nonatomic) NSInteger selectedIndex;
 
 - (id)initWithViewControllers:(NSArray *)viewControllers delegate:(id <OBTabBarControllerDelegate>)delegate;
 
@@ -37,5 +36,5 @@
 @end
 
 @interface UIActionSheet(OBTabBarActionSheetAdditions)
-- (void)showFromFeverTabBar:(OBTabBarController *)tabBarController;
+- (void)showFromTabBar:(OBTabBarController *)tabBarController;
 @end
