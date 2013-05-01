@@ -6,7 +6,6 @@
 //
 
 #import "OBTabBarController.h"
-#import "UIButton+OBAdditions.h"
 
 #define kNoViewControllerSelected -1
 
@@ -29,16 +28,6 @@
 @end
 
 @implementation OBTabBarController
-
-@synthesize viewControllers = _viewControllers;
-@synthesize delegate = _delegate;
-
-@synthesize tabBar = _tabBar;
-@synthesize viewForVisibleViewController = _viewForVisibleViewController;
-@synthesize tabBarHidden = _tabBarHidden, tabBarHiddenBeforePresentingModalViewController = _tabBarHiddenBeforePresentingModalViewController;
-@synthesize tabBarButtons = _tabBarButtons;
-@synthesize tabBarImages = _tabBarImages, selectedTabBarImages = _selectedTabBarImages, backgroundImage = _backgroundImage;
-@synthesize selectedIndex = _selectedIndex;
 
 - (id)initWithViewControllers:(NSArray *)viewControllers delegate:(id <OBTabBarControllerDelegate>)delegate
 {
@@ -74,11 +63,20 @@
 
         for (NSUInteger index = 0; index < self.viewControllers.count; index++) 
         {
-            [images addObject:[self.delegate imageTabAtIndex:index]];
+            UIImage *tabBarIcon = [self.delegate imageTabAtIndex:index];
+            if(tabBarIcon != nil)
+            {
+                [images addObject:tabBarIcon];
+            }
+            
             
             if ([self.delegate respondsToSelector:@selector(highlightedImageTabAtIndex:)])
             {
-                [highlighedImages addObject:[self.delegate highlightedImageTabAtIndex:index]];
+                UIImage *tabBarHighlightedIcon = [self.delegate highlightedImageTabAtIndex:index];
+                if(tabBarHighlightedIcon != nil)
+                {
+                    [highlighedImages addObject:tabBarHighlightedIcon];
+                }
             }
         }
         
@@ -152,8 +150,9 @@
     if (!_tabBar)
     {
         CGRect tabBarControllerFrame = [self frameForTabBarControllerView];
-        _tabBar = [[UIView alloc] initWithFrame:CGRectMake(0, tabBarControllerFrame.size.height - [OBTabBarController tabBarHeight], tabBarControllerFrame.size.width, [OBTabBarController tabBarHeight])];
+        _tabBar = [[UIView alloc] initWithFrame:CGRectMake(0, tabBarControllerFrame.size.height - [[self class] tabBarHeight], tabBarControllerFrame.size.width, [[self class] tabBarHeight])];
         _tabBar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
+        _tabBar.backgroundColor = [UIColor blackColor];
         
         UIImageView *tabBarBackground = [[UIImageView alloc] initWithImage:self.backgroundImage];
         tabBarBackground.frame = _tabBar.bounds;
@@ -165,25 +164,43 @@
         
         [self.tabBarButtons removeAllObjects];
         
-        __block typeof(self) blockSafeSelf = self;
-        
         for (int i = 0; i < self.viewControllers.count; i++)
         {
-            CGFloat defaultHeight = 44;
+            CGFloat defaultHeight = [[self class] tabBarHeight];
             CGFloat defaultWidth = buttonWidth;
-            UIImage *tabImage = [self.tabBarImages objectAtIndex:i];
-            CGRect buttonFrame = CGRectMake(buttonLeftMargin - (tabImage.size.width - defaultWidth), defaultHeight - tabImage.size.height, buttonWidth + (tabImage.size.width - defaultWidth), buttonHeight + (tabImage.size.height - defaultHeight));
+            UIImage *tabImage = nil;
+            UIImage *selectedTabImage = nil;
 
-#warning guarrada de código
-            UIButton *tabBarButton = [UIButton buttonWithType:UIButtonTypeCustom forControlEvents:(i != 2) ? UIControlEventTouchDown : UIControlEventTouchUpInside tapCallback:^(UIButton *button) {
-                blockSafeSelf.selectedIndex = i;                
-            }];
+            if(self.tabBarImages.count > i)
+            {
+                tabImage = [self.tabBarImages objectAtIndex:i];
+            }
+            
+            if(self.selectedTabBarImages.count > i)
+            {
+                selectedTabImage = [self.selectedTabBarImages objectAtIndex:i];
+            }
+            
+            CGSize tabImageSize = tabImage != nil ? tabImage.size : CGSizeZero;
+            
+//            CGRect buttonFrame = CGRectMake(buttonLeftMargin - (tabImageSize.width - defaultWidth), defaultHeight - tabImageSize.height, buttonWidth + (tabImageSize.width - defaultWidth), buttonHeight + (tabImageSize.height - defaultHeight));
+            
+            CGRect buttonFrame = CGRectMake(buttonLeftMargin, 0, buttonWidth, buttonHeight);
+            
+            UIButton *tabBarButton = [UIButton buttonWithType:UIButtonTypeCustom];
+            tabBarButton.tag = i;
+            [tabBarButton addTarget:self action:@selector(tabBarButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
             
             tabBarButton.frame = buttonFrame;
             
             [tabBarButton setImage:tabImage forState:UIControlStateNormal];
-            [tabBarButton setImage:[self.selectedTabBarImages objectAtIndex:i] forState:UIControlStateHighlighted];
-            [tabBarButton setImage:[self.selectedTabBarImages objectAtIndex:i] forState:UIControlStateSelected];
+            
+            if(selectedTabImage != nil)
+            {
+                [tabBarButton setImage:[self.selectedTabBarImages objectAtIndex:i] forState:UIControlStateHighlighted];
+                [tabBarButton setImage:[self.selectedTabBarImages objectAtIndex:i] forState:UIControlStateSelected];
+            }
+            
             tabBarButton.adjustsImageWhenHighlighted = NO;
             [_tabBar addSubview:tabBarButton];
             [self.tabBarButtons addObject:tabBarButton];
@@ -192,6 +209,11 @@
     }
     
     return _tabBar;
+}
+
+- (void)tabBarButtonPressed:(UIButton *)button
+{
+    self.selectedIndex = button.tag;
 }
 
 - (UIView *)viewForVisibleViewController
@@ -324,7 +346,7 @@
 
 + (CGFloat)tabBarHeight
 {
-    return 44.0f;
+    return 44;
 }
 
 #pragma mark - Memory Management
