@@ -152,7 +152,7 @@
         CGRect tabBarControllerFrame = [self frameForTabBarControllerView];
         _tabBar = [[UIView alloc] initWithFrame:CGRectMake(0, tabBarControllerFrame.size.height - [[self class] tabBarHeight], tabBarControllerFrame.size.width, [[self class] tabBarHeight])];
         _tabBar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
-        _tabBar.backgroundColor = [UIColor blackColor];
+        _tabBar.backgroundColor = [UIColor whiteColor];
         
         UIImageView *tabBarBackground = [[UIImageView alloc] initWithImage:self.backgroundImage];
         tabBarBackground.frame = _tabBar.bounds;
@@ -189,7 +189,7 @@
             
             UIButton *tabBarButton = [UIButton buttonWithType:UIButtonTypeCustom];
             tabBarButton.tag = i;
-            [tabBarButton addTarget:self action:@selector(tabBarButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+            [tabBarButton addTarget:self action:@selector(tabBarButtonPressed:) forControlEvents:UIControlEventTouchDown];
             
             tabBarButton.frame = buttonFrame;
             
