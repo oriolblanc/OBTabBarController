@@ -127,7 +127,6 @@
         UIViewController *willShowViewController = [transitionInfo valueForKey:@"UINavigationControllerNextVisibleViewController"];
         BOOL isTheFirstViewControllerInTheNavigationStack = willShowViewController == [willShowViewController.navigationController.viewControllers objectAtIndex:0];
         
-        //        BOOL controllerIsBeingPresentedModally = (![blockSafeSelf.viewControllers containsObject:willShowViewController.parentViewController]);
         BOOL controllerIsBeingPresentedModally = NO;
         
         BOOL hide = (willShowViewController.hidesBottomBarWhenPushed && !isTheFirstViewControllerInTheNavigationStack) || controllerIsBeingPresentedModally;
@@ -166,8 +165,6 @@
         
         for (int i = 0; i < self.viewControllers.count; i++)
         {
-            CGFloat defaultHeight = [[self class] tabBarHeight];
-            CGFloat defaultWidth = buttonWidth;
             UIImage *tabImage = nil;
             UIImage *selectedTabImage = nil;
 
@@ -180,10 +177,6 @@
             {
                 selectedTabImage = [self.selectedTabBarImages objectAtIndex:i];
             }
-            
-            CGSize tabImageSize = tabImage != nil ? tabImage.size : CGSizeZero;
-            
-//            CGRect buttonFrame = CGRectMake(buttonLeftMargin - (tabImageSize.width - defaultWidth), defaultHeight - tabImageSize.height, buttonWidth + (tabImageSize.width - defaultWidth), buttonHeight + (tabImageSize.height - defaultHeight));
             
             CGRect buttonFrame = CGRectMake(buttonLeftMargin, 0, buttonWidth, buttonHeight);
             
