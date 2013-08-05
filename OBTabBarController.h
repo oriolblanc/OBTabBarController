@@ -17,6 +17,7 @@
     - (UIImage *)highlightedImageTabAtIndex:(NSUInteger)index;
     - (BOOL)shouldSelectTabAtIndex:(NSUInteger)index;
     - (void)didSelectedTabAtIndex:(NSUInteger)index;
+    - (BOOL)shouldShowLabelForIndex:(NSUInteger)index;
 @end
 
 @interface OBTabBarController : UIViewController

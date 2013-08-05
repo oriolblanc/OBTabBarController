@@ -20,11 +20,17 @@
 @property (nonatomic, assign) BOOL tabBarHiddenBeforePresentingModalViewController;
 
 @property (nonatomic, retain) NSMutableArray *tabBarButtons;
+@property (nonatomic, retain) NSMutableArray *tabBarLabels;
 @property (nonatomic, copy) NSArray *tabBarImages;
 @property (nonatomic, copy) NSArray *selectedTabBarImages;
 @property (nonatomic, retain) UIImage *backgroundImage;
 
+- (UIColor *)textColor;
+- (UIColor *)textBackgroundColor;
+- (UIColor *)textHighlightedColor;
+
 - (void)setTabBarHidden:(BOOL)hidden animated:(BOOL)animated;
+
 @end
 
 @implementation OBTabBarController
@@ -39,6 +45,7 @@
         self.delegate = delegate;
         self.viewControllers = viewControllers;
         self.tabBarButtons = [NSMutableArray arrayWithCapacity:self.viewControllers.count];
+        self.tabBarLabels = [NSMutableArray arrayWithCapacity:self.viewControllers.count];
         
         _selectedIndex = kNoViewControllerSelected;
         _selectedIndexInternal = kNoViewControllerSelected;
@@ -161,21 +168,16 @@
         CGFloat buttonWidth = _tabBar.frame.size.width / (float)self.viewControllers.count;
         CGFloat buttonHeight = _tabBar.frame.size.height;
         
+        [self.tabBarLabels removeAllObjects];
         [self.tabBarButtons removeAllObjects];
         
         for (int i = 0; i < self.viewControllers.count; i++)
         {
             UIImage *tabImage = nil;
-            UIImage *selectedTabImage = nil;
 
             if(self.tabBarImages.count > i)
             {
                 tabImage = [self.tabBarImages objectAtIndex:i];
-            }
-            
-            if(self.selectedTabBarImages.count > i)
-            {
-                selectedTabImage = [self.selectedTabBarImages objectAtIndex:i];
             }
             
             CGRect buttonFrame = CGRectMake(buttonLeftMargin, 0, buttonWidth, buttonHeight);
@@ -188,15 +190,40 @@
             
             [tabBarButton setImage:tabImage forState:UIControlStateNormal];
             
-            if(selectedTabImage != nil)
-            {
-                [tabBarButton setImage:[self.selectedTabBarImages objectAtIndex:i] forState:UIControlStateHighlighted];
-                [tabBarButton setImage:[self.selectedTabBarImages objectAtIndex:i] forState:UIControlStateSelected];
-            }
-            
             tabBarButton.adjustsImageWhenHighlighted = NO;
             [_tabBar addSubview:tabBarButton];
             [self.tabBarButtons addObject:tabBarButton];
+            
+            if ([self.delegate respondsToSelector:@selector(shouldShowLabelForIndex:)])
+            {
+                if ([self.delegate shouldShowLabelForIndex:i])
+                {
+                    CGFloat fontPointSize;
+                    UILabel *titleLabel;
+                    
+                    static CGFloat padding = 2.0f;
+                    fontPointSize = [self textFont].pointSize;
+                    
+                    titleLabel = [[UILabel alloc] initWithFrame:(CGRect){
+                        .origin.x = buttonLeftMargin,
+                        .origin.y = CGRectGetHeight(_tabBar.frame) - fontPointSize - padding,
+                        .size.width = buttonWidth,
+                        .size.height = fontPointSize
+                    }];
+                    
+                    titleLabel.textColor = [self textColor];
+                    titleLabel.highlightedTextColor = [self textHighlightedColor];
+                    titleLabel.font = [self textFont];
+                    titleLabel.text = ((UIViewController *)self.viewControllers[i]).title;
+                    titleLabel.textAlignment = NSTextAlignmentCenter;
+                    titleLabel.backgroundColor = [self textBackgroundColor];
+                    
+                    [_tabBar addSubview:titleLabel];
+                    [self.tabBarLabels addObject:titleLabel];
+                }
+            }
+            
+            
             buttonLeftMargin += buttonWidth;
         }
     }
@@ -242,6 +269,27 @@
     }];
 }
 
+- (UIColor *)textColor
+{
+    return [[UITabBarItem appearance] titleTextAttributesForState:UIControlStateNormal][UITextAttributeTextColor] ? : [UIColor grayColor];
+}
+
+- (UIColor *)textBackgroundColor
+{
+    return [[UINavigationBar appearance] tintColor] ? : [UIColor clearColor];
+}
+
+- (UIColor *)textHighlightedColor
+{
+    return [[UITabBarItem appearance] titleTextAttributesForState:UIControlStateSelected][UITextAttributeTextColor] ? : [UIColor whiteColor];
+}
+
+- (UIFont *)textFont
+{
+    return [[UITabBarItem appearance] titleTextAttributesForState:UIControlStateNormal][UITextAttributeFont] ? :
+                                                                [UIFont boldSystemFontOfSize:10.0f];
+}
+
 - (void)presentModalViewController:(UIViewController *)modalViewController animated:(BOOL)animated
 {
     [super presentViewController:modalViewController animated:animated completion:^{
@@ -272,28 +320,20 @@
             return;
         }
     }
-
+    
     [self.tabBarButtons setValue:[NSNumber numberWithBool:NO] forKey:@"enabled"]; // Disable all buttons to avoid quick switching between tabs
     [self.tabBarButtons setValue:[NSNumber numberWithBool:NO] forKey:@"selected"]; // Deselect all
     [[self.tabBarButtons objectAtIndex:index] setSelected:YES];
     
-    for (int i = 0; i < self.selectedTabBarImages.count; i++)
-    {
-        UIButton *tabBarButton = [self.tabBarButtons objectAtIndex:i];
-        
-        if (i != index)
-        {
-            [tabBarButton setImage:[self.tabBarImages objectAtIndex:i] forState:UIControlStateNormal];
-            [tabBarButton setImage:[self.selectedTabBarImages objectAtIndex:i] forState:UIControlStateHighlighted];
-            [tabBarButton setImage:[self.selectedTabBarImages objectAtIndex:i] forState:UIControlStateSelected];   
-        }
-        else
-        {
-            [tabBarButton setImage:[self.selectedTabBarImages objectAtIndex:i] forState:UIControlStateNormal];        
-            [tabBarButton setImage:[self.selectedTabBarImages objectAtIndex:i] forState:UIControlStateHighlighted];        
-            [tabBarButton setImage:[self.selectedTabBarImages objectAtIndex:i] forState:UIControlStateSelected];        
-        }
-    }
+    [self.selectedTabBarImages enumerateObjectsUsingBlock:^(UIImage *selectedTabImage, NSUInteger idx, BOOL *stop) {
+        UIButton *tabBarButton = self.tabBarButtons[idx];
+        [tabBarButton setImage:idx != index ? self.tabBarImages[idx] : selectedTabImage
+                      forState:UIControlStateNormal];
+    }];
+    
+    [self.tabBarLabels enumerateObjectsUsingBlock:^(UILabel *titleLabel, NSUInteger idx, BOOL *stop) {
+        titleLabel.highlighted = idx == index;
+    }];
     
     if (index != _selectedIndex || _selectedIndexInternal != kNoViewControllerSelected)
     {        
