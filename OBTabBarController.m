@@ -10,20 +10,19 @@
 #define kNoViewControllerSelected -1
 
 @interface OBTabBarController ()
-{
-    NSUInteger _selectedIndexInternal; // To store the previous selected index when the view is unloaded
-}
 
-@property (nonatomic, retain) UIView *tabBar;
-@property (nonatomic, retain) UIView *viewForVisibleViewController;
-@property (nonatomic, assign) BOOL tabBarHidden;
-@property (nonatomic, assign) BOOL tabBarHiddenBeforePresentingModalViewController;
+@property (nonatomic) NSUInteger selectedIndexInternal; // To store the previous selected index when the view is unloaded
 
-@property (nonatomic, retain) NSMutableArray *tabBarButtons;
-@property (nonatomic, retain) NSMutableArray *tabBarLabels;
+@property (nonatomic, strong) UIView *tabBar;
+@property (nonatomic, strong) UIView *viewForVisibleViewController;
+@property (nonatomic) BOOL tabBarHidden;
+@property (nonatomic) BOOL tabBarHiddenBeforePresentingModalViewController;
+
+@property (nonatomic, strong) NSMutableArray *tabBarButtons;
+@property (nonatomic, strong) NSMutableArray *tabBarLabels;
 @property (nonatomic, copy) NSArray *tabBarImages;
 @property (nonatomic, copy) NSArray *selectedTabBarImages;
-@property (nonatomic, retain) UIImage *backgroundImage;
+@property (nonatomic, strong) UIImage *backgroundImage;
 
 - (UIColor *)textColor;
 - (UIColor *)textBackgroundColor;

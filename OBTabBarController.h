@@ -10,14 +10,17 @@
 @class OBTabBarController;
 
 @protocol OBTabBarControllerDelegate <NSObject>
-    - (UIImage *)imageTabAtIndex:(NSUInteger)index;
-    
-    @optional
-    - (UIImage *)tabBarBackground;
-    - (UIImage *)highlightedImageTabAtIndex:(NSUInteger)index;
-    - (BOOL)shouldSelectTabAtIndex:(NSUInteger)index;
-    - (void)didSelectedTabAtIndex:(NSUInteger)index;
-    - (BOOL)shouldShowLabelForIndex:(NSUInteger)index;
+
+@required
+- (UIImage *)imageTabAtIndex:(NSUInteger)index;
+
+@optional
+- (UIImage *)tabBarBackground;
+- (UIImage *)highlightedImageTabAtIndex:(NSUInteger)index;
+- (BOOL)shouldSelectTabAtIndex:(NSUInteger)index;
+- (void)didSelectedTabAtIndex:(NSUInteger)index;
+- (BOOL)shouldShowLabelForIndex:(NSUInteger)index;
+
 @end
 
 @interface OBTabBarController : UIViewController
