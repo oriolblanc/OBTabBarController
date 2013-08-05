@@ -119,7 +119,7 @@
 {
     [super viewDidLoad];
     
-    __block typeof(self) blockSafeSelf = self;
+    __weak typeof(self) blockSafeSelf = self;
     
     [[NSNotificationCenter defaultCenter] addObserverForName:@"UINavigationControllerWillShowViewControllerNotification" object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
         NSDictionary *transitionInfo = note.userInfo;
