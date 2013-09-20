@@ -25,7 +25,6 @@
 @property (nonatomic, strong) UIImage *backgroundImage;
 
 - (UIColor *)textColor;
-- (UIColor *)textBackgroundColor;
 - (UIColor *)textHighlightedColor;
 
 - (void)setTabBarHidden:(BOOL)hidden animated:(BOOL)animated;
@@ -215,7 +214,7 @@
                     titleLabel.font = [self textFont];
                     titleLabel.text = ((UIViewController *)self.viewControllers[i]).title;
                     titleLabel.textAlignment = NSTextAlignmentCenter;
-                    titleLabel.backgroundColor = [self textBackgroundColor];
+                    titleLabel.backgroundColor = [self clearColor];
                     
                     [_tabBar addSubview:titleLabel];
                     [self.tabBarLabels addObject:titleLabel];
@@ -271,11 +270,6 @@
 - (UIColor *)textColor
 {
     return [[UITabBarItem appearance] titleTextAttributesForState:UIControlStateNormal][UITextAttributeTextColor] ? : [UIColor grayColor];
-}
-
-- (UIColor *)textBackgroundColor
-{
-    return [[UINavigationBar appearance] tintColor] ? : [UIColor clearColor];
 }
 
 - (UIColor *)textHighlightedColor
